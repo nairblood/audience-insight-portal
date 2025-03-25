@@ -90,6 +90,10 @@ const FilmAnalysis = () => {
     return comparison ? `${comparison.name} Comparison (${timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)})` : "Film Comparison";
   };
 
+  // Find the selected comparison option to get its icon
+  const selectedOption = comparisonOptions.find(c => c.id === selectedComparison);
+  const SelectedIcon = selectedOption ? selectedOption.icon : null;
+
   return (
     <DashboardLayout>
       <div className="grid gap-6">
@@ -149,9 +153,7 @@ const FilmAnalysis = () => {
               <CardTitle className="text-sm font-medium">
                 {getComparisonTitle()}
               </CardTitle>
-              {comparisonOptions.find(c => c.id === selectedComparison)?.icon && (
-                <comparisonOptions.find(c => c.id === selectedComparison)!.icon className="h-4 w-4 text-muted-foreground" />
-              )}
+              {SelectedIcon && <SelectedIcon className="h-4 w-4 text-muted-foreground" />}
             </CardHeader>
             <CardContent>
               <div className="text-center py-10">
