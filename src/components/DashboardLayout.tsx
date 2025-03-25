@@ -1,14 +1,12 @@
-
 import { ReactNode, useState } from 'react';
 import { 
-  CalendarDays, 
+  BarChart2,
   Film, 
   LayoutDashboard, 
-  MapPin, 
   Menu, 
+  MessageSquare,
   Search, 
-  Ticket, 
-  Users, 
+  TrendingUp, 
   X 
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -27,16 +25,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const sidebarLinks = [
     { icon: LayoutDashboard, name: 'Dashboard', path: '/' },
-    { icon: Film, name: 'Movies', path: '/movies' },
-    { icon: Ticket, name: 'Showtime', path: '/showtimes' },
-    { icon: MapPin, name: 'Cinemas', path: '/cinema-metrics' },
-    { icon: CalendarDays, name: 'Calendar', path: '/calendar' },
-    { icon: Users, name: 'Audience', path: '/audience' },
+    { icon: MessageSquare, name: 'Analysis of netizen discussions', path: '/discussions' },
+    { icon: TrendingUp, name: 'Trending topics and forecasts', path: '/trending' },
+    { icon: BarChart2, name: 'Film analysis', path: '/film-analysis' },
   ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       <aside 
         className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out bg-white border-r border-border/40 ${
           isSidebarOpen ? 'w-64' : 'w-0 -translate-x-full sm:translate-x-0 sm:w-16'
@@ -101,13 +96,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <div
         className={`flex-1 transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'pl-64' : 'pl-0 sm:pl-16'
         }`}
       >
-        {/* Header */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/40 bg-white/90 backdrop-blur-sm px-6">
           <Button
             variant="ghost"
@@ -143,7 +136,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
