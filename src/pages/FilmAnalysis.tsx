@@ -4,26 +4,25 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart2, 
-  BarChart, 
   Calendar, 
   DollarSign, 
   Film, 
   Users, 
   Ticket, 
-  Clock 
+  Clock,
+  LineChart,
+  PieChart,
+  BarChart
 } from "lucide-react";
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type ComparisonType = 
   | "admission" 
@@ -32,13 +31,30 @@ type ComparisonType =
   | "demographic" 
   | "openingDay" 
   | "openingWeek" 
-  | "ticketSales";
+  | "ticketSales"
+  | "realtime";
 
 type TimeFrame = "daily" | "weekly" | "monthly" | "yearly";
+
+type FilmOption = {
+  id: string;
+  title: string;
+};
 
 const FilmAnalysis = () => {
   const [selectedComparison, setSelectedComparison] = useState<ComparisonType>("admission");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("daily");
+  const [selectedFilms, setSelectedFilms] = useState<string[]>(["film1", "film2"]);
+  const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
+
+  // Sample film options
+  const filmOptions: FilmOption[] = [
+    { id: "film1", title: "Interstellar" },
+    { id: "film2", title: "Inception" },
+    { id: "film3", title: "The Dark Knight" },
+    { id: "film4", title: "Dune" },
+    { id: "film5", title: "Oppenheimer" },
+  ];
 
   const comparisonOptions = [
     { 
@@ -83,6 +99,12 @@ const FilmAnalysis = () => {
       icon: Ticket, 
       description: "Compare ticket sales data from various platforms"
     },
+    { 
+      id: "realtime" as ComparisonType, 
+      name: "Real-time Figures", 
+      icon: LineChart, 
+      description: "View real-time figures and interactive data"
+    },
   ];
 
   const getComparisonTitle = () => {
@@ -94,11 +116,67 @@ const FilmAnalysis = () => {
   const selectedOption = comparisonOptions.find(c => c.id === selectedComparison);
   const SelectedIcon = selectedOption ? selectedOption.icon : null;
 
+  const toggleFilmSelection = (filmId: string) => {
+    if (selectedFilms.includes(filmId)) {
+      setSelectedFilms(selectedFilms.filter(id => id !== filmId));
+    } else {
+      setSelectedFilms([...selectedFilms, filmId]);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="grid gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Film Analysis</h1>
+          <div className="flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Film className="mr-2 h-4 w-4" />
+                  Select Films ({selectedFilms.length})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {filmOptions.map((film) => (
+                  <DropdownMenuItem
+                    key={film.id}
+                    className={cn(
+                      "cursor-pointer",
+                      selectedFilms.includes(film.id) && "bg-accent"
+                    )}
+                    onClick={() => toggleFilmSelection(film.id)}
+                  >
+                    {film.title}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <div className="flex gap-1">
+              <Button 
+                variant={chartType === "bar" ? "default" : "outline"} 
+                size="icon" 
+                onClick={() => setChartType("bar")}
+              >
+                <BarChart className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant={chartType === "line" ? "default" : "outline"} 
+                size="icon" 
+                onClick={() => setChartType("line")}
+              >
+                <LineChart className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant={chartType === "pie" ? "default" : "outline"} 
+                size="icon" 
+                onClick={() => setChartType("pie")}
+              >
+                <PieChart className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -113,22 +191,19 @@ const FilmAnalysis = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Select Metric</div>
-                  <NavigationMenu orientation="vertical" className="max-w-full w-full">
-                    <NavigationMenuList className="flex flex-col space-y-1 w-full">
-                      {comparisonOptions.map((option) => (
-                        <NavigationMenuItem key={option.id} className="w-full">
-                          <Button
-                            variant={selectedComparison === option.id ? "default" : "ghost"}
-                            className="w-full justify-start"
-                            onClick={() => setSelectedComparison(option.id)}
-                          >
-                            <option.icon className="mr-2 h-4 w-4" />
-                            {option.name}
-                          </Button>
-                        </NavigationMenuItem>
-                      ))}
-                    </NavigationMenuList>
-                  </NavigationMenu>
+                  <div className="flex flex-col space-y-1 w-full">
+                    {comparisonOptions.map((option) => (
+                      <Button
+                        key={option.id}
+                        variant={selectedComparison === option.id ? "default" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => setSelectedComparison(option.id)}
+                      >
+                        <option.icon className="mr-2 h-4 w-4" />
+                        {option.name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -165,7 +240,14 @@ const FilmAnalysis = () => {
                   {selectedComparison === "openingDay" && "Opening day comparison data will appear here"}
                   {selectedComparison === "openingWeek" && "Opening week comparison data will appear here"}
                   {selectedComparison === "ticketSales" && "Ticket sales comparison data will appear here"}
+                  {selectedComparison === "realtime" && "Real-time figures and interactive tables will appear here"}
                 </p>
+                <div className="mt-4 text-sm text-muted-foreground">
+                  <p>Comparing {selectedFilms.length} films: {selectedFilms.map(id => 
+                    filmOptions.find(f => f.id === id)?.title).join(", ")}
+                  </p>
+                  <p className="mt-2">Chart type: {chartType === "bar" ? "Bar Chart" : chartType === "line" ? "Line Chart" : "Pie Chart"}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
