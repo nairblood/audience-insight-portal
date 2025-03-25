@@ -12,7 +12,8 @@ import {
   Clock,
   LineChart,
   PieChart,
-  BarChart
+  BarChart,
+  ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,7 +23,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type ComparisonType = 
   | "admission" 
@@ -41,11 +48,14 @@ type FilmOption = {
   title: string;
 };
 
+type ComparisonMenuType = "filmComparison" | "timeComparison" | "demographicComparison";
+
 const FilmAnalysis = () => {
   const [selectedComparison, setSelectedComparison] = useState<ComparisonType>("admission");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("daily");
   const [selectedFilms, setSelectedFilms] = useState<string[]>(["film1", "film2"]);
   const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
+  const [comparisonMenuType, setComparisonMenuType] = useState<ComparisonMenuType>("filmComparison");
 
   // Sample film options
   const filmOptions: FilmOption[] = [
@@ -105,6 +115,24 @@ const FilmAnalysis = () => {
       icon: LineChart, 
       description: "View real-time figures and interactive data"
     },
+  ];
+
+  const comparisonMenuOptions = [
+    {
+      id: "filmComparison" as ComparisonMenuType,
+      name: "Film Comparison",
+      description: "Compare metrics between different films"
+    },
+    {
+      id: "timeComparison" as ComparisonMenuType,
+      name: "Time-based Comparison",
+      description: "Compare film performance across different time periods"
+    },
+    {
+      id: "demographicComparison" as ComparisonMenuType,
+      name: "Demographic Comparison",
+      description: "Compare audience demographics for selected films"
+    }
   ];
 
   const getComparisonTitle = () => {
@@ -190,6 +218,23 @@ const FilmAnalysis = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
+                  <div className="text-sm font-medium">Comparison Type</div>
+                  <div className="flex flex-col space-y-1 w-full">
+                    {comparisonMenuOptions.map((option) => (
+                      <Button
+                        key={option.id}
+                        variant={comparisonMenuType === option.id ? "default" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => setComparisonMenuType(option.id)}
+                      >
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        {option.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <div className="text-sm font-medium">Select Metric</div>
                   <div className="flex flex-col space-y-1 w-full">
                     {comparisonOptions.map((option) => (
@@ -247,6 +292,7 @@ const FilmAnalysis = () => {
                     filmOptions.find(f => f.id === id)?.title).join(", ")}
                   </p>
                   <p className="mt-2">Chart type: {chartType === "bar" ? "Bar Chart" : chartType === "line" ? "Line Chart" : "Pie Chart"}</p>
+                  <p className="mt-2">Comparison mode: {comparisonMenuOptions.find(o => o.id === comparisonMenuType)?.name}</p>
                 </div>
               </div>
             </CardContent>
