@@ -11,7 +11,6 @@ import CinemaMetrics from "./pages/CinemaMetrics";
 import NotFound from "./pages/NotFound";
 import Discussions from "./pages/Discussions";
 import Trending from "./pages/Trending";
-import FilmAnalysis from "./pages/FilmAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +25,6 @@ const App = () => (
             <Route path="/cinema-metrics" element={<CinemaMetrics />} />
             <Route path="/discussions" element={<Discussions />} />
             <Route path="/trending" element={<Trending />} />
-            <Route path="/film-analysis" element={<FilmAnalysis />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
