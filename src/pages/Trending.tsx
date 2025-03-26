@@ -1,6 +1,11 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CurrentTrendingTopics from "@/components/trending/CurrentTrendingTopics";
+import PopularKeywords from "@/components/trending/PopularKeywords";
+import TrendingHashtags from "@/components/trending/TrendingHashtags";
+import KeywordForecast from "@/components/trending/KeywordForecast";
 import { TrendingUp } from "lucide-react";
 
 const Trending = () => {
@@ -19,9 +24,26 @@ const Trending = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-center py-10">
-              <p className="text-muted-foreground">Trending topics and forecasts content will appear here</p>
-            </div>
+            <Tabs defaultValue="current-trends" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="current-trends">Current Trends</TabsTrigger>
+                <TabsTrigger value="popular-keywords">Popular Keywords</TabsTrigger>
+                <TabsTrigger value="trending-hashtags">Trending Hashtags</TabsTrigger>
+                <TabsTrigger value="keyword-forecast">Keyword Forecast</TabsTrigger>
+              </TabsList>
+              <TabsContent value="current-trends" className="mt-4">
+                <CurrentTrendingTopics />
+              </TabsContent>
+              <TabsContent value="popular-keywords" className="mt-4">
+                <PopularKeywords />
+              </TabsContent>
+              <TabsContent value="trending-hashtags" className="mt-4">
+                <TrendingHashtags />
+              </TabsContent>
+              <TabsContent value="keyword-forecast" className="mt-4">
+                <KeywordForecast />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
