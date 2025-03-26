@@ -28,6 +28,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { icon: LayoutDashboard, name: 'Dashboard', path: '/' },
     { icon: MessageSquare, name: 'Analysis of netizen discussions', path: '/discussions' },
     { icon: TrendingUp, name: 'Trending topics and forecasts', path: '/trending' },
+    { icon: BarChart2, name: 'Film Comparison', path: '/comparison' },
   ];
 
   return (
