@@ -1,12 +1,16 @@
 
 import { useState } from 'react';
-import { BarChart2, Calendar, Clock, DollarSign, Film, Users, X } from 'lucide-react';
+import { BarChart2, Calendar, Clock, DollarSign, Film, Search, Users, X } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
-import { MovieCard } from '@/components/MovieCard';
+import MovieCard from '@/components/MovieCard';
+import { Input } from '@/components/ui/input';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 import {
   BarChart,
   Bar,
@@ -147,6 +151,8 @@ const fetchMovieComparisonData = async (metric: ComparisonMetric, selectedMovies
 const ComparisonPage = () => {
   const [activeMetric, setActiveMetric] = useState<ComparisonMetric>('admission');
   const [selectedMovies, setSelectedMovies] = useState<number[]>([1, 2, 3]); // Default selected movies
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   // Query to fetch comparison data
   const { data, isLoading } = useQuery({
@@ -154,13 +160,18 @@ const ComparisonPage = () => {
     queryFn: () => fetchMovieComparisonData(activeMetric, selectedMovies),
   });
 
-  // Get available movie options (excluding already selected ones)
-  const availableMovies = mockMovies.filter(movie => !selectedMovies.includes(movie.id));
+  // Filter available movies based on search query
+  const filteredMovies = mockMovies.filter(movie => 
+    !selectedMovies.includes(movie.id) && 
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Handle movie selection change
   const handleAddMovie = (movieId: number) => {
     if (selectedMovies.length < 6) { // Limit to 6 movies for comparison
       setSelectedMovies([...selectedMovies, movieId]);
+      setIsSearchOpen(false);
+      setSearchQuery('');
     }
   };
 
@@ -199,43 +210,9 @@ const ComparisonPage = () => {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Comparison Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs 
-                defaultValue="admission" 
-                value={activeMetric}
-                onValueChange={(value) => setActiveMetric(value as ComparisonMetric)}
-                className="w-full"
-              >
-                <TabsList className="grid grid-cols-2 mb-2">
-                  <TabsTrigger value="admission" className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Admission</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="grossIncome" className="flex items-center gap-1">
-                    <DollarSign className="h-4 w-4" />
-                    <span>Gross Income</span>
-                  </TabsTrigger>
-                </TabsList>
-                <TabsList className="grid grid-cols-2">
-                  <TabsTrigger value="showtimes" className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>Showtimes</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="demographics" className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    <span>Demographics</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </CardContent>
-          </Card>
-
-          <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <div className="grid gap-4 md:grid-cols-1">
+          {/* Selected Films Section - Moved to the top */}
+          <Card className="col-span-1">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Selected Films</CardTitle>
               <CardDescription>Choose up to 6 films to compare</CardDescription>
@@ -278,21 +255,88 @@ const ComparisonPage = () => {
                   ))}
                 </div>
                 
-                {availableMovies.length > 0 && selectedMovies.length < 6 && (
-                  <Select onValueChange={(value) => handleAddMovie(Number(value))}>
-                    <SelectTrigger className="w-full md:w-[200px]">
-                      <SelectValue placeholder="Add film" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableMovies.map((movie) => (
-                        <SelectItem key={movie.id} value={movie.id.toString()}>
-                          {movie.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {selectedMovies.length < 6 && (
+                  <div className="flex items-center space-x-2">
+                    <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full md:w-auto flex items-center gap-2">
+                          <Search size={16} />
+                          <span>Search and add film</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 w-[300px]" align="start">
+                        <Command>
+                          <CommandInput 
+                            placeholder="Search films..."
+                            value={searchQuery}
+                            onValueChange={setSearchQuery}
+                          />
+                          <CommandList>
+                            <CommandEmpty>No films found.</CommandEmpty>
+                            <CommandGroup heading="Available Films">
+                              {filteredMovies.map((movie) => (
+                                <CommandItem
+                                  key={movie.id}
+                                  onSelect={() => handleAddMovie(movie.id)}
+                                  className="flex items-center gap-2 cursor-pointer"
+                                >
+                                  <div className="w-8 h-12 bg-muted rounded overflow-hidden flex-shrink-0">
+                                    <img 
+                                      src={movie.posterUrl} 
+                                      alt={movie.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm">{movie.title}</p>
+                                    <p className="text-xs text-muted-foreground">{movie.year} · {movie.genre}</p>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Comparison Type Section - Moved below the selected films */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">Comparison Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs 
+                defaultValue="admission" 
+                value={activeMetric}
+                onValueChange={(value) => setActiveMetric(value as ComparisonMetric)}
+                className="w-full"
+              >
+                <TabsList className="grid grid-cols-2 mb-2">
+                  <TabsTrigger value="admission" className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>Admission</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="grossIncome" className="flex items-center gap-1">
+                    <DollarSign className="h-4 w-4" />
+                    <span>Gross Income</span>
+                  </TabsTrigger>
+                </TabsList>
+                <TabsList className="grid grid-cols-2">
+                  <TabsTrigger value="showtimes" className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    <span>Showtimes</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="demographics" className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    <span>Demographics</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
