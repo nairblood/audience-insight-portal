@@ -1,7 +1,11 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare } from "lucide-react";
+import SentimentAnalysis from "@/components/discussions/SentimentAnalysis";
+import SentimentPosts from "@/components/discussions/SentimentPosts";
+import WarningAlerts from "@/components/discussions/WarningAlerts";
 
 const Discussions = () => {
   return (
@@ -14,14 +18,27 @@ const Discussions = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Discussion Analysis
+              MD Entertainment Films - Social Media Analysis
             </CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-center py-10">
-              <p className="text-muted-foreground">Analysis of netizen discussions content will appear here</p>
-            </div>
+            <Tabs defaultValue="sentiment-analysis" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="sentiment-analysis">Sentiment Analysis</TabsTrigger>
+                <TabsTrigger value="sentiment-posts">Sentiment Posts</TabsTrigger>
+                <TabsTrigger value="warning-alerts">Warning Alerts</TabsTrigger>
+              </TabsList>
+              <TabsContent value="sentiment-analysis" className="mt-4">
+                <SentimentAnalysis />
+              </TabsContent>
+              <TabsContent value="sentiment-posts" className="mt-4">
+                <SentimentPosts />
+              </TabsContent>
+              <TabsContent value="warning-alerts" className="mt-4">
+                <WarningAlerts />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
