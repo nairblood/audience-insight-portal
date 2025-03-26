@@ -1,11 +1,12 @@
 
 import { useState } from 'react';
-import { BarChart2, Calendar, Clock, DollarSign, Users } from 'lucide-react';
+import { BarChart2, Calendar, Clock, DollarSign, Film, Users, X } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
+import { MovieCard } from '@/components/MovieCard';
 import {
   BarChart,
   Bar,
@@ -20,12 +21,66 @@ import {
 type ComparisonMetric = 'admission' | 'grossIncome' | 'showtimes' | 'demographics';
 
 const mockMovies = [
-  { id: 1, title: 'Interstellar' },
-  { id: 2, title: 'The Matrix' },
-  { id: 3, title: 'Inception' },
-  { id: 4, title: 'Pulp Fiction' },
-  { id: 5, title: 'The Shawshank Redemption' },
-  { id: 6, title: 'The Dark Knight' },
+  { 
+    id: 1, 
+    title: 'Interstellar', 
+    posterUrl: 'https://images.unsplash.com/photo-1578374173705-969cbe6f2d6b?q=80&w=300&auto=format&fit=crop',
+    description: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.',
+    genre: 'Sci-Fi/Adventure',
+    year: 2014,
+    duration: 169,
+    rating: 8.6
+  },
+  { 
+    id: 2, 
+    title: 'The Matrix', 
+    posterUrl: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=300&auto=format&fit=crop',
+    description: 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.',
+    genre: 'Sci-Fi/Action',
+    year: 1999,
+    duration: 136,
+    rating: 8.7
+  },
+  { 
+    id: 3, 
+    title: 'Inception', 
+    posterUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=300&auto=format&fit=crop',
+    description: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
+    genre: 'Sci-Fi/Action',
+    year: 2010,
+    duration: 148,
+    rating: 8.8
+  },
+  { 
+    id: 4, 
+    title: 'Pulp Fiction', 
+    posterUrl: 'https://images.unsplash.com/photo-1614846384571-1e31fbd12a3f?q=80&w=300&auto=format&fit=crop',
+    description: 'The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.',
+    genre: 'Crime/Drama',
+    year: 1994,
+    duration: 154,
+    rating: 8.9
+  },
+  { 
+    id: 5, 
+    title: 'The Shawshank Redemption', 
+    posterUrl: 'https://images.unsplash.com/photo-1602170284347-c49accb7e749?q=80&w=300&auto=format&fit=crop',
+    description: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.',
+    genre: 'Drama',
+    year: 1994,
+    duration: 142,
+    rating: 9.3
+  },
+  { 
+    id: 6, 
+    title: 'The Dark Knight', 
+    posterUrl: 'https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=300&auto=format&fit=crop',
+    description: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
+    genre: 'Action/Crime',
+    year: 2008,
+    duration: 152,
+    rating: 9.0
+  },
 ];
 
 // Mock data for each metric
@@ -130,6 +185,9 @@ const ComparisonPage = () => {
 
   const metricInfo = getMetricInfo(activeMetric);
 
+  // Get selected movies data
+  const selectedMoviesData = selectedMovies.map(id => mockMovies.find(movie => movie.id === id)!);
+
   return (
     <DashboardLayout>
       <div className="space-y-4">
@@ -183,22 +241,41 @@ const ComparisonPage = () => {
               <CardDescription>Choose up to 6 films to compare</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {selectedMovies.map((movieId) => {
-                    const movie = mockMovies.find(m => m.id === movieId);
-                    return (
-                      <div key={movieId} className="flex items-center bg-muted rounded-md px-3 py-1">
-                        <span>{movie?.title}</span>
-                        <button 
-                          className="ml-2 text-muted-foreground hover:text-foreground"
-                          onClick={() => handleRemoveMovie(movieId)}
-                        >
-                          ×
-                        </button>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {selectedMoviesData.map((movie) => (
+                    <div key={movie.id} className="relative group rounded-lg overflow-hidden border border-border shadow-sm bg-card">
+                      <button 
+                        className="absolute top-2 right-2 z-10 p-1 bg-black/50 rounded-full text-white hover:bg-black/80 transition-colors"
+                        onClick={() => handleRemoveMovie(movie.id)}
+                      >
+                        <X size={16} />
+                      </button>
+                      <div className="flex h-full">
+                        <div className="w-1/3 bg-muted">
+                          <img 
+                            src={movie.posterUrl} 
+                            alt={movie.title}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="w-2/3 p-3 flex flex-col">
+                          <h3 className="font-semibold text-sm">{movie.title}</h3>
+                          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{movie.description}</p>
+                          <div className="mt-auto pt-2 text-xs space-y-1">
+                            <div className="flex items-center gap-1">
+                              <Film size={12} />
+                              <span>{movie.genre}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Calendar size={12} />
+                              <span>{movie.year}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
                 
                 {availableMovies.length > 0 && selectedMovies.length < 6 && (
