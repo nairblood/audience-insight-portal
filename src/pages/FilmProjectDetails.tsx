@@ -1,12 +1,12 @@
-
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Film, TrendingUp, TrendingDown, MapPin } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { Film, TrendingUp, TrendingDown, MapPin, ChartBar, Copy } from "lucide-react";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 // Mock data for film performance
 const filmPerformanceData = {
@@ -56,6 +56,35 @@ const cityChartData = [
   { name: 'Other Cities', value: 103400 },
 ];
 
+// New mock data for comparison with similar films
+const comparisonData = {
+  openingDay: [
+    { name: 'Current Film', value: 37500 },
+    { name: 'Pengabdi Setan 2', value: 42000 },
+    { name: 'The Doll 3', value: 31200 },
+    { name: 'Perempuan Tanah Jahanam', value: 29800 },
+  ],
+  openingWeekend: [
+    { name: 'Current Film', value: 98400 },
+    { name: 'Pengabdi Setan 2', value: 112500 },
+    { name: 'The Doll 3', value: 85700 },
+    { name: 'Perempuan Tanah Jahanam', value: 78900 },
+  ],
+  viewingHours: [
+    { day: 'Day 1', current: 6.2, pengabdiSetan: 7.1, theDoll: 5.8, perempuan: 5.5 },
+    { day: 'Day 3', current: 5.8, pengabdiSetan: 6.5, theDoll: 5.2, perempuan: 5.0 },
+    { day: 'Day 7', current: 5.1, pengabdiSetan: 5.7, theDoll: 4.8, perempuan: 4.4 },
+    { day: 'Day 10', current: 4.3, pengabdiSetan: 4.9, theDoll: 3.9, perempuan: 3.6 },
+    { day: 'Day 13', current: 3.8, pengabdiSetan: 4.2, theDoll: 3.3, perempuan: 3.0 },
+  ],
+  conclusions: [
+    "Current film is performing 12% below 'Pengabdi Setan 2' but 15% above 'Perempuan Tanah Jahanam'",
+    "Opening weekend was stronger than expected for a film in this genre",
+    "Viewer retention is higher than average, with strong day 13 numbers",
+    "Expected to achieve 400,000+ total admissions based on current trajectory"
+  ]
+};
+
 const FilmProjectDetails = () => {
   const { projectId } = useParams();
   const [activeTab, setActiveTab] = useState("performance");
@@ -72,9 +101,10 @@ const FilmProjectDetails = () => {
         </div>
         
         <Tabs defaultValue="performance" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 w-[400px]">
+          <TabsList className="grid grid-cols-3 w-[600px]">
             <TabsTrigger value="performance">Film Performance</TabsTrigger>
             <TabsTrigger value="cities">City Analysis</TabsTrigger>
+            <TabsTrigger value="comparison">Genre Comparison</TabsTrigger>
           </TabsList>
           
           <TabsContent value="performance" className="space-y-4 mt-6">
@@ -278,6 +308,142 @@ const FilmProjectDetails = () => {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="comparison" className="space-y-4 mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center">
+                  <ChartBar className="h-5 w-5 text-primary mr-2" />
+                  <CardTitle>Comparison with Similar Genre Films</CardTitle>
+                </div>
+                <CardDescription>
+                  Opening day, opening weekend performance and viewing hours compared to similar films
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Opening Day Comparison */}
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-medium">Opening Day (OD) Performance</CardTitle>
+                      <CardDescription>Admissions comparison on day one</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={comparisonData.openingDay}
+                            margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="value" name="Admissions" fill="#3b82f6" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Opening Weekend Comparison */}
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-medium">Opening Weekend (OW) Performance</CardTitle>
+                      <CardDescription>Weekend admissions comparison</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={comparisonData.openingWeekend}
+                            margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="value" name="Admissions" fill="#3b82f6" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Viewing Hours Over Time */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-medium">Viewing Hours Trends</CardTitle>
+                    <CardDescription>Average viewing hours per viewer by day</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-72">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={comparisonData.viewingHours}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="day" />
+                          <YAxis />
+                          <ChartTooltip />
+                          <Line 
+                            type="monotone" 
+                            dataKey="current" 
+                            name="Current Film" 
+                            stroke="#3b82f6" 
+                            strokeWidth={2} 
+                            activeDot={{ r: 8 }} 
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="pengabdiSetan" 
+                            name="Pengabdi Setan 2" 
+                            stroke="#ef4444" 
+                            strokeWidth={2} 
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="theDoll" 
+                            name="The Doll 3" 
+                            stroke="#10b981" 
+                            strokeWidth={2} 
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="perempuan" 
+                            name="Perempuan Tanah Jahanam" 
+                            stroke="#f59e0b" 
+                            strokeWidth={2} 
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Analysis Conclusions */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center">
+                      <Copy className="h-5 w-5 text-primary mr-2" />
+                      <CardTitle className="text-lg font-medium">Analysis Conclusions</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 list-disc pl-5">
+                      {comparisonData.conclusions.map((conclusion, index) => (
+                        <li key={index} className="text-sm text-muted-foreground">
+                          {conclusion}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>
