@@ -8,7 +8,8 @@ import {
   MessageSquare,
   Search, 
   TrendingUp, 
-  X 
+  X,
+  VideoIcon
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
@@ -29,6 +30,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { icon: MessageSquare, name: 'Analysis of netizen discussions', path: '/discussions' },
     { icon: TrendingUp, name: 'Trending topics and forecasts', path: '/trending' },
     { icon: BarChart2, name: 'Film Comparison', path: '/comparison' },
+    { icon: VideoIcon, name: 'Film Analysis', path: '/film-analysis' },
   ];
 
   return (

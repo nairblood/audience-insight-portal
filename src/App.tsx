@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Discussions from "./pages/Discussions";
 import Trending from "./pages/Trending";
 import ComparisonPage from "./pages/Comparison";
+import FilmAnalysis from "./pages/FilmAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/discussions" element={<Discussions />} />
             <Route path="/trending" element={<Trending />} />
             <Route path="/comparison" element={<ComparisonPage />} />
+            <Route path="/film-analysis" element={<FilmAnalysis />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
