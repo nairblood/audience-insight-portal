@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from "@/components/DashboardLayout";
 import { Film, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ const initialProjects = [
 const FilmAnalysis = () => {
   const [projects, setProjects] = useState(initialProjects);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Form setup
   const form = useForm<FormValues>({
@@ -63,6 +65,11 @@ const FilmAnalysis = () => {
     toast.success("Project created successfully!");
     form.reset();
     setOpen(false);
+  };
+
+  // Handle opening a project
+  const handleOpenProject = (projectId: string) => {
+    navigate(`/film-analysis/${projectId}`);
   };
 
   return (
@@ -139,7 +146,11 @@ const FilmAnalysis = () => {
                 </p>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleOpenProject(project.id)}
+                >
                   Open Project
                 </Button>
               </CardFooter>

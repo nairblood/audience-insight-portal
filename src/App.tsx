@@ -13,6 +13,7 @@ import Discussions from "./pages/Discussions";
 import Trending from "./pages/Trending";
 import ComparisonPage from "./pages/Comparison";
 import FilmAnalysis from "./pages/FilmAnalysis";
+import FilmProjectDetails from "./pages/FilmProjectDetails";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/trending" element={<Trending />} />
             <Route path="/comparison" element={<ComparisonPage />} />
             <Route path="/film-analysis" element={<FilmAnalysis />} />
+            <Route path="/film-analysis/:projectId" element={<FilmProjectDetails />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
