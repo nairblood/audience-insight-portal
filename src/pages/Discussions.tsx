@@ -6,6 +6,7 @@ import { MessageSquare } from "lucide-react";
 import SentimentAnalysis from "@/components/discussions/SentimentAnalysis";
 import SentimentPosts from "@/components/discussions/SentimentPosts";
 import WarningAlerts from "@/components/discussions/WarningAlerts";
+import ContentVolume from "@/components/discussions/ContentVolume";
 
 const Discussions = () => {
   return (
@@ -24,10 +25,11 @@ const Discussions = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="sentiment-analysis" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="sentiment-analysis">Sentiment Analysis</TabsTrigger>
                 <TabsTrigger value="sentiment-posts">Sentiment Posts</TabsTrigger>
                 <TabsTrigger value="warning-alerts">Warning Alerts</TabsTrigger>
+                <TabsTrigger value="content-volume">Content Volume</TabsTrigger>
               </TabsList>
               <TabsContent value="sentiment-analysis" className="mt-4">
                 <SentimentAnalysis />
@@ -37,6 +39,9 @@ const Discussions = () => {
               </TabsContent>
               <TabsContent value="warning-alerts" className="mt-4">
                 <WarningAlerts />
+              </TabsContent>
+              <TabsContent value="content-volume" className="mt-4">
+                <ContentVolume />
               </TabsContent>
             </Tabs>
           </CardContent>
