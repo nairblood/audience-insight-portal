@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardLayout from "@/components/DashboardLayout";
@@ -108,17 +109,55 @@ const FilmProjectDetails = () => {
           </TabsList>
           
           <TabsContent value="performance" className="space-y-4 mt-6">
+            {/* Total Admission Card - Separated from the other tabs */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Admission</CardTitle>
+                <CardDescription>
+                  Overall performance metrics for the film
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Total Admissions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{filmPerformanceData.total.admissions.toLocaleString()}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Total Screenings</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{filmPerformanceData.total.screenings.toLocaleString()}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Per Screening</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{filmPerformanceData.total.avgPerScreening}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Admissions Overview Card with Daily and Weekly tabs */}
             <Card>
               <CardHeader>
                 <CardTitle>Admissions Overview</CardTitle>
-                <CardDescription>Daily, weekly, and total admission statistics</CardDescription>
+                <CardDescription>Daily and weekly admission statistics</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="daily">
                   <TabsList>
                     <TabsTrigger value="daily">Daily Admission</TabsTrigger>
                     <TabsTrigger value="weekly">Weekly Admission</TabsTrigger>
-                    <TabsTrigger value="total">Total Admission</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="daily" className="space-y-4 mt-4">
@@ -187,35 +226,6 @@ const FilmProjectDetails = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
-                  
-                  <TabsContent value="total" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Total Admissions</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-3xl font-bold">{filmPerformanceData.total.admissions.toLocaleString()}</div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Total Screenings</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-3xl font-bold">{filmPerformanceData.total.screenings.toLocaleString()}</div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Per Screening</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-3xl font-bold">{filmPerformanceData.total.avgPerScreening}</div>
-                        </CardContent>
-                      </Card>
-                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
