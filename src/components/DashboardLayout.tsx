@@ -16,6 +16,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { ThemeToggle } from './ThemeToggle';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -34,9 +35,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <aside 
-        className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out bg-white border-r border-border/40 ${
+        className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out bg-card border-r border-border/40 ${
           isSidebarOpen ? 'w-64' : 'w-0 -translate-x-full sm:translate-x-0 sm:w-16'
         }`}
       >
@@ -67,7 +68,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   className={`flex items-center p-3 rounded-lg transition-colors ${
                     location.pathname === link.path
                       ? 'bg-primary/10 text-primary'
-                      : 'text-gray-700 hover:bg-muted'
+                      : 'text-foreground hover:bg-muted'
                   } ${!isSidebarOpen && 'justify-center'}`}
                 >
                   <link.icon size={20} className={!isSidebarOpen ? 'mx-auto' : 'mr-3'} />
@@ -104,7 +105,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           isSidebarOpen ? 'pl-64' : 'pl-0 sm:pl-16'
         }`}
       >
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/40 bg-white/90 backdrop-blur-sm px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/40 bg-card/90 backdrop-blur-sm px-6">
           <Button
             variant="ghost"
             size="icon"
@@ -135,6 +136,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <SelectItem value="yearly">Yearly</SelectItem>
                 </SelectContent>
               </Select>
+              <ThemeToggle />
             </div>
           </div>
         </header>
