@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Form schema
 const formSchema = z.object({
@@ -25,6 +26,20 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+// Latest films data
+const latestFilms = [
+  "KKN di Desa Penari",
+  "Mencuri Raden Saleh",
+  "Pengabdi Setan 2",
+  "Perjanjian Gaib",
+  "Sri Asih",
+  "Waktu Magrib",
+  "Mumun",
+  "Ngeri-Ngeri Sedap",
+  "Layangan Putus",
+  "Ben & Jody"
+];
 
 // Mock projects data
 const initialProjects = [
@@ -87,6 +102,14 @@ const FilmAnalysis = () => {
     const movieValue = form.getValues("movie")?.trim();
     if (movieValue && !movies.includes(movieValue)) {
       setMovies([...movies, movieValue]);
+      form.setValue("movie", "");
+    }
+  };
+
+  // Handle adding a movie from select dropdown
+  const handleSelectMovie = (value: string) => {
+    if (!movies.includes(value)) {
+      setMovies([...movies, value]);
       form.setValue("movie", "");
     }
   };
@@ -166,7 +189,28 @@ const FilmAnalysis = () => {
                   {/* Movie section */}
                   <div className="space-y-2">
                     <FormLabel>Movies</FormLabel>
+
+                    {/* Select movie from dropdown */}
                     <div className="flex gap-2">
+                      <Select onValueChange={handleSelectMovie}>
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Select a movie" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {latestFilms.map((film) => (
+                            <SelectItem key={film} value={film}>
+                              <div className="flex items-center gap-2">
+                                <Film className="h-4 w-4" />
+                                {film}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Or enter custom movie */}
+                    <div className="flex gap-2 mt-2">
                       <FormField
                         control={form.control}
                         name="movie"
@@ -174,7 +218,7 @@ const FilmAnalysis = () => {
                           <FormItem className="flex-1">
                             <FormControl>
                               <Input 
-                                placeholder="Add a movie" 
+                                placeholder="Or type a custom movie" 
                                 {...field} 
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
