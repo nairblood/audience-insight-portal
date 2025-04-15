@@ -23,7 +23,6 @@ const formSchema = z.object({
   }),
   description: z.string().optional(),
   movie: z.string().optional(),
-  customMovie: z.string().optional(),
   keyword: z.string().optional(),
 });
 
@@ -68,7 +67,6 @@ const FilmAnalysis = () => {
   const [open, setOpen] = useState(false);
   const [movies, setMovies] = useState<string[]>([]);
   const [keywords, setKeywords] = useState<string[]>([]);
-  const [customMovieMode, setCustomMovieMode] = useState(false);
   const navigate = useNavigate();
   
   // Form setup
@@ -78,7 +76,6 @@ const FilmAnalysis = () => {
       projectName: "",
       description: "",
       movie: "",
-      customMovie: "",
       keyword: "",
     },
   });
@@ -98,25 +95,7 @@ const FilmAnalysis = () => {
     form.reset();
     setMovies([]);
     setKeywords([]);
-    setCustomMovieMode(false);
     setOpen(false);
-  };
-
-  // Handle adding a movie
-  const handleAddMovie = () => {
-    const movieValue = customMovieMode 
-      ? form.getValues("customMovie")?.trim()
-      : form.getValues("movie")?.trim();
-      
-    if (movieValue && !movies.includes(movieValue)) {
-      setMovies([...movies, movieValue]);
-      if (customMovieMode) {
-        form.setValue("customMovie", "");
-      } else {
-        form.setValue("movie", "");
-      }
-      toast.success(`"${movieValue}" added to project`);
-    }
   };
 
   // Handle adding a movie from select dropdown
@@ -159,13 +138,6 @@ const FilmAnalysis = () => {
   // Handle opening a project
   const handleOpenProject = (projectId: string) => {
     navigate(`/film-analysis/${projectId}`);
-  };
-
-  // Toggle between custom movie input and dropdown
-  const toggleCustomMovieMode = () => {
-    setCustomMovieMode(!customMovieMode);
-    form.setValue("movie", "");
-    form.setValue("customMovie", "");
   };
 
   return (
@@ -222,109 +194,22 @@ const FilmAnalysis = () => {
                   
                   {/* Movie section */}
                   <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <FormLabel>Movies</FormLabel>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm"
-                        onClick={toggleCustomMovieMode}
-                        className="text-xs"
-                      >
-                        {customMovieMode ? "Show Latest Films" : "Add Custom/Deleted Film"}
-                      </Button>
-                    </div>
-
-                    {!customMovieMode ? (
-                      <>
-                        {/* Select movie from dropdown */}
-                        <div className="flex gap-2">
-                          <Select onValueChange={handleSelectMovie}>
-                            <SelectTrigger className="flex-1">
-                              <SelectValue placeholder="Select a movie" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {latestFilms.map((film) => (
-                                <SelectItem key={film} value={film}>
-                                  <div className="flex items-center gap-2">
-                                    <Film className="h-4 w-4" />
-                                    {film}
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {/* Or enter custom movie */}
-                        <div className="flex gap-2 mt-2">
-                          <FormField
-                            control={form.control}
-                            name="movie"
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input 
-                                    placeholder="Or type a custom movie" 
-                                    {...field} 
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        handleAddMovie();
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={handleAddMovie}
-                            className="flex items-center gap-1"
-                          >
-                            <Film className="h-4 w-4" />
-                            Add
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      /* Custom/Deleted movie input */
-                      <div className="flex gap-2">
-                        <FormField
-                          control={form.control}
-                          name="customMovie"
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormControl>
-                                <Input 
-                                  placeholder="Enter deleted or custom film title" 
-                                  {...field} 
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                      handleAddMovie();
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={handleAddMovie}
-                          className="flex items-center gap-1"
-                        >
-                          <Film className="h-4 w-4" />
-                          Add
-                        </Button>
-                      </div>
-                    )}
+                    <FormLabel>Select Movies</FormLabel>
+                    <Select onValueChange={handleSelectMovie}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a movie" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {latestFilms.map((film) => (
+                          <SelectItem key={film} value={film}>
+                            <div className="flex items-center gap-2">
+                              <Film className="h-4 w-4" />
+                              {film}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     
                     {movies.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -488,3 +373,4 @@ const FilmAnalysis = () => {
 };
 
 export default FilmAnalysis;
+
