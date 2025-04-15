@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from "@/components/DashboardLayout";
-import { Film, Plus, X, Tag } from "lucide-react";
+import { Film, Plus, X, Tag, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -115,6 +115,7 @@ const FilmAnalysis = () => {
       } else {
         form.setValue("movie", "");
       }
+      toast.success(`"${movieValue}" added to project`);
     }
   };
 
@@ -123,12 +124,14 @@ const FilmAnalysis = () => {
     if (!movies.includes(value)) {
       setMovies([...movies, value]);
       form.setValue("movie", "");
+      toast.success(`"${value}" added to project`);
     }
   };
 
   // Handle removing a movie
   const handleRemoveMovie = (movie: string) => {
     setMovies(movies.filter((m) => m !== movie));
+    toast.info(`"${movie}" removed from project`);
   };
 
   // Handle adding a keyword
@@ -137,12 +140,20 @@ const FilmAnalysis = () => {
     if (keywordValue && !keywords.includes(keywordValue)) {
       setKeywords([...keywords, keywordValue]);
       form.setValue("keyword", "");
+      toast.success(`Keyword "${keywordValue}" added`);
     }
   };
 
   // Handle removing a keyword
   const handleRemoveKeyword = (keyword: string) => {
     setKeywords(keywords.filter((k) => k !== keyword));
+    toast.info(`Keyword "${keyword}" removed`);
+  };
+
+  // Handle deleting a project
+  const handleDeleteProject = (projectId: string) => {
+    setProjects(projects.filter(project => project.id !== projectId));
+    toast.success("Project deleted successfully!");
   };
 
   // Handle opening a project
@@ -220,7 +231,7 @@ const FilmAnalysis = () => {
                         onClick={toggleCustomMovieMode}
                         className="text-xs"
                       >
-                        {customMovieMode ? "Show Latest Films" : "Add Deleted/Custom Film"}
+                        {customMovieMode ? "Show Latest Films" : "Add Custom/Deleted Film"}
                       </Button>
                     </div>
 
@@ -323,8 +334,9 @@ const FilmAnalysis = () => {
                             {movie}
                             <button 
                               type="button" 
-                              className="ml-1 text-muted-foreground hover:text-foreground"
+                              className="ml-1 text-destructive hover:bg-destructive/10 rounded-full p-0.5"
                               onClick={() => handleRemoveMovie(movie)}
+                              aria-label={`Remove ${movie}`}
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -378,8 +390,9 @@ const FilmAnalysis = () => {
                             {keyword}
                             <button 
                               type="button" 
-                              className="ml-1 text-muted-foreground hover:text-foreground"
+                              className="ml-1 text-destructive hover:bg-destructive/10 rounded-full p-0.5"
                               onClick={() => handleRemoveKeyword(keyword)}
+                              aria-label={`Remove keyword ${keyword}`}
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -402,9 +415,23 @@ const FilmAnalysis = () => {
           {projects.map((project) => (
             <Card key={project.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Film className="h-5 w-5 text-primary" />
-                  {project.name}
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Film className="h-5 w-5 text-primary" />
+                    {project.name}
+                  </div>
+                  <Button
+                    variant="ghost" 
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject(project.id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Delete project</span>
+                  </Button>
                 </CardTitle>
                 <CardDescription>
                   Created on {project.createdAt}
